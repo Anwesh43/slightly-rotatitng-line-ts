@@ -28,7 +28,7 @@ const drawSRLNode = (context : CanvasRenderingContext2D, i : number, scale : num
     context.restore()
 }
 
-class SlightlyRotatingStepStage {
+class SlightlyRotatingLineStepStage {
     canvas : HTMLCanvasElement = document.createElement('canvas')
     context : CanvasRenderingContext2D
     initCanvas() {
@@ -45,12 +45,10 @@ class SlightlyRotatingStepStage {
     }
 
     render() {
-        this.context.fillStyle = '#BDBDBD'
-        this.context.fillRect(0, 0, w, h)
     }
 
     static init() {
-        const stage : SlightlyRotatingStepStage = new SlightlyRotatingStepStage()
+        const stage : SlightlyRotatingLineStepStage = new SlightlyRotatingLineStepStage()
         stage.initCanvas()
         stage.render()
         stage.handleTap()
@@ -143,11 +141,11 @@ class SRLSNode {
     }
 }
 
-class SlightlyRotatingStep {
+class SlightlyRotatingLineStep {
     root : SRLSNode = new SRLSNode(0)
     curr : SRLSNode = this.root
     dir : number = 1
-    
+
     draw(context : CanvasRenderingContext2D) {
         this.root.draw(context)
     }
@@ -163,5 +161,30 @@ class SlightlyRotatingStep {
 
     startUpdating(cb : Function) {
         this.curr.startUpdating(cb)
+    }
+}
+
+class Renderer {
+
+    srs : SlightlyRotatingLineStep = new SlightlyRotatingLineStep()
+
+    animator : Animator = new Animator()
+
+    render(context) {
+        context.fillStyle = '#BDBDBD'
+        context.fillRect(0, 0, w, h)
+        this.srs.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.srs.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.srs.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
     }
 }
