@@ -31,6 +31,8 @@ const drawSRLNode = (context : CanvasRenderingContext2D, i : number, scale : num
 class SlightlyRotatingLineStepStage {
     canvas : HTMLCanvasElement = document.createElement('canvas')
     context : CanvasRenderingContext2D
+    renderer : Renderer = new Renderer()
+
     initCanvas() {
         this.canvas.width = w
         this.canvas.height = h
@@ -40,11 +42,14 @@ class SlightlyRotatingLineStepStage {
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
     render() {
+        this.renderer.render(this.context)
     }
 
     static init() {
