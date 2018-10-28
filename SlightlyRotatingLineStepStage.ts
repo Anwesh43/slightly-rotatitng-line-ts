@@ -1,5 +1,33 @@
 const w : number = window.innerWidth, h : number = window.innerHeight
 const nodes : number = 5
+const k = 4
+const divideScale = (scale : number, i : number) => Math.min(0.5, Math.max(0, scale - 0.5 * i)) * 2
+const drawSRLNode = (context : CanvasRenderingContext2D, i : number, scale : number) => {
+    context.lineWidth = Math.min(w, h) / 60
+    context.lineCap = 'round'
+    context.strokeStyle = '#673AB7'
+    const gap : number = w / (nodes + 1)
+    context.save()
+    context.translate(i * gap + gap, h/2)
+    for (var j = 0; j < (k/2); j++) {
+        const sc : number = divideScale(scale, j)
+        context.save()
+        context.scale(1, 1 - 2 * j)
+        for (var p = 0; p < (k/2); p++) {
+            const scp : number = divideScale(scale, p)
+            context.save()
+            context.rotate(Math.PI/2 * (1 - 2 * p) * scp)
+            context.beginPath()
+            context.moveTo(0, 0)
+            context.lineTo(0, gap/3)
+            context.stroke()
+            context.restore()
+        }
+        context.restore()
+    }
+    context.restore()
+}
+
 class SlightlyRotatingStepStage {
     canvas : HTMLCanvasElement = document.createElement('canvas')
     context : CanvasRenderingContext2D
@@ -35,7 +63,7 @@ class State {
     dir : number = 0
 
     update(cb : Function) {
-        this.scale += 0.025 * this.dir
+        this.scale += (0.1 / k) * this.dir
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
