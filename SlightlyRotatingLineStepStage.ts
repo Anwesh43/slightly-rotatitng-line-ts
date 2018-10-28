@@ -14,9 +14,9 @@ const drawSRLNode = (context : CanvasRenderingContext2D, i : number, scale : num
         context.save()
         context.scale(1, 1 - 2 * j)
         for (var p = 0; p < (k/2); p++) {
-            const scp : number = divideScale(scale, p)
+            const scp : number = divideScale(sc, p)
             context.save()
-            context.rotate(Math.PI/2 * (1 - 2 * p) * scp)
+            context.rotate(Math.PI/4 * (1 - 2 * p) * scp)
             context.beginPath()
             context.moveTo(0, 0)
             context.lineTo(0, gap/3)
@@ -139,7 +139,7 @@ class SRLSNode {
             curr = this.next
         }
         if (curr) {
-            return this.next
+            return curr
         }
         cb()
         return this
